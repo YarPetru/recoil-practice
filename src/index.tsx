@@ -6,6 +6,8 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import {RecoilRoot} from 'recoil'
 import Atoms from './examples/Atoms'
 import {Selectors} from './examples/Selectors'
+import {Async} from './examples/Async'
+import {Suspense} from 'react'
 
 ReactDOM.render(
     // <React.StrictMode>
@@ -18,6 +20,11 @@ ReactDOM.render(
                     </Route>
                     <Route path="/examples/selectors">
                         <Selectors />
+                    </Route>
+                    <Route path="/examples/async">
+                        <Suspense fallback={<div>Loading...</div>}>
+                            <Async />
+                        </Suspense>
                     </Route>
                     <Route>
                         <Canvas />

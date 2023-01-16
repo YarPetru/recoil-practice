@@ -1,25 +1,30 @@
+import {Suspense} from 'react'
+
 import {atomFamily, useRecoilState} from 'recoil'
 import {selectedElementState} from '../../Canvas'
 import {Drag} from '../Drag'
 import {Resize} from '../Resize'
 import {RectangleContainer} from './RectangleContainer'
 import {RectangleInner} from './RectangleInner'
+import {RectangleLoading} from './RectangleLoading'
 
 export type ElementStyle = {
     position: {top: number; left: number}
     size: {width: number; height: number}
 }
 
-export type Element = {style: ElementStyle}
+export type Element = {style: ElementStyle; image?: {id: number; src: string}}
+
+export const defaultElement = {
+    style: {
+        position: {top: 20, left: 20},
+        size: {width: 150, height: 75},
+    },
+}
 
 export const elementState = atomFamily<Element, number>({
     key: 'element',
-    default: {
-        style: {
-            position: {top: 0, left: 0},
-            size: {width: 100, height: 50},
-        },
-    },
+    default: defaultElement,
 })
 
 export const Rectangle = ({id}: {id: number}) => {
@@ -50,6 +55,7 @@ export const Rectangle = ({id}: {id: number}) => {
                     position={element.style.position}
                     onDrag={(position) => {
                         setElement({
+                            ...element,
                             style: {
                                 ...element.style,
                                 position,
@@ -58,7 +64,9 @@ export const Rectangle = ({id}: {id: number}) => {
                     }}
                 >
                     <div>
-                        <RectangleInner selected={selected} />
+                        <Suspense fallback={<RectangleLoading selected={selected} />}>
+                            <RectangleInner selected={selected} id={id} />
+                        </Suspense>
                     </div>
                 </Drag>
             </Resize>
